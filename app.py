@@ -1,56 +1,61 @@
 import streamlit as st
 
-# CONFIG
-st.set_page_config(page_title="OMEGA POS", page_icon="🏨", layout="wide")
-
-# HIDE BROWSER UI
+# 1. SETUP & STYLE
+st.set_page_config(page_title="OMEGA OS", page_icon="💎", layout="wide")
 st.markdown("""<style>
 #MainMenu {visibility: hidden;} footer {visibility: hidden;} header {visibility: hidden;}
-.stButton>button {width: 100%; height: 80px; font-size: 20px; font-weight:bold; border-radius: 12px;}
+.block-container {padding-top: 15px;}
+button[data-baseweb="tab"] {font-size: 16px; font-weight: bold; flex-grow: 1;}
+.stButton>button {width: 100%; border-radius: 12px; height: 60px; font-weight: bold; border: 1px solid #ddd;}
 </style>""", unsafe_allow_html=True)
 
-# SIDEBAR
-with st.sidebar:
-    st.title("OMEGA OS 🚀")
-    mode = st.radio("SELECT MODE:", ["🏨 FRONT DESK", "🍽️ RESTO POS", "📊 ADMIN"])
-    st.success("SYSTEM: ONLINE (CLOUD)")
+# 2. HEADER
+st.title("💎 OMEGA ENTERPRISE")
+st.caption("Central Command System | v3.0 Online")
 
-# === HOTEL MODE ===
-if mode == "🏨 FRONT DESK":
-    st.header("🏨 ROOM STATUS MANAGER")
+# 3. TABS (ITO YUNG HINAHANAP MO)
+tabs = st.tabs(["🏨 HOTEL", "🍔 BURGER", "✈️ TRAVEL", "👗 STORE", "📊 ADMIN"])
+
+# === HOTEL ===
+with tabs[0]:
+    st.header("🏨 Room Management")
     c1, c2 = st.columns(2)
-    
-    # Room 101
     with c1:
-        st.success("ROOM 101: VACANT")
-        if st.button("CHECK-IN GUEST (101)"):
-            st.toast("✅ Check-In Successful!")
-    
-    # Room 102
+        st.info("Room 101: 🟢 VACANT")
+        if st.button("Check-In 101"): st.success("✅ Checked In!")
     with c2:
-        st.error("ROOM 102: OCCUPIED")
-        if st.button("CHECK-OUT GUEST (102)"):
-            st.toast("💰 Payment Received. Room Cleared.")
+        st.error("Room 102: 🔴 OCCUPIED")
+        if st.button("Check-Out 102"): st.warning("💰 Bill: ₱1,500")
 
-# === RESTO MODE ===
-elif mode == "🍽️ RESTO POS":
-    st.header("🍽️ TOUCH ORDERING")
-    
-    col1, col2 = st.columns(2)
-    with col1:
-        if st.button("🍔 WAGYU BURGER (₱350)"):
-            st.toast("✅ Added: Wagyu Burger")
-        if st.button("🍝 TRUFFLE PASTA (₱450)"):
-            st.toast("✅ Added: Truffle Pasta")
-            
-    with col2:
-        if st.button("🥤 COKE ZERO (₱80)"):
-            st.toast("✅ Added: Coke Zero")
-        if st.button("🍺 SAN MIG LIGHT (₱100)"):
-            st.toast("✅ Added: Beer")
+# === BURGER ===
+with tabs[1]:
+    st.header("🍔 Burger Joint POS")
+    c1, c2 = st.columns(2)
+    with c1:
+        st.write("#### 🍔 FOOD")
+        if st.button("Classic Burger (₱85)"): st.toast("➕ Classic")
+        if st.button("Cheese Burger (₱95)"): st.toast("➕ Cheese")
+    with c2:
+        st.write("#### 🥤 DRINKS")
+        if st.button("Coke (₱25)"): st.toast("➕ Coke")
+        if st.button("Water (₱15)"): st.toast("➕ Water")
 
-# === ADMIN MODE ===
-elif mode == "📊 ADMIN":
-    st.header("📊 SYSTEM DASHBOARD")
-    st.info("Status: Running on Streamlit Cloud ☁️")
-    st.metric("Total Revenue (Today)", "₱15,450", "+12%")
+# === TRAVEL ===
+with tabs[2]:
+    st.header("✈️ Travel Agency")
+    st.selectbox("Select Service:", ["Book Flight", "Hotel", "Visa Assistance"])
+    if st.button("🚀 CONFIRM BOOKING"): st.success("Ticket Generated!")
+
+# === STORE ===
+with tabs[3]:
+    st.header("👗 Inaul Malong")
+    c1, c2 = st.columns(2)
+    with c1:
+        if st.button("🔴 SELL RED (₱1,200)"): st.toast("Sold Red!")
+    with c2:
+        if st.button("🟡 SELL GOLD (₱1,500)"): st.toast("Sold Gold!")
+
+# === ADMIN ===
+with tabs[4]:
+    st.header("📊 Dashboard")
+    st.metric("Total Sales", "₱24,500", "+15%")
