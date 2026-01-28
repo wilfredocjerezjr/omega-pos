@@ -1,3 +1,5 @@
+import database
+
 import streamlit as st
 import random
 import datetime
@@ -37,17 +39,22 @@ def run():
             st.info(f"Browsing {network} Promos...")
             promo = st.selectbox("Select Promo", ["Regular 100", "Go50", "AllNet 20"])
             
-        # THE BUY BUTTON
+                # THE BUY BUTTON (CONNECTED TO DATABASE)
         if st.button("PAY NOW", type="primary", use_container_width=True):
             if len(phone) < 10:
                 st.error("⚠️ Please enter a valid mobile number")
             else:
                 with st.spinner("Processing Transaction..."):
-                    time.sleep(2) # Fake processing time
-                    ref_id = f"TRX-{random.randint(10000,99999)}"
+                    time.sleep(1) # Processing simulation
+                    
+                    # --- THE MONEY SHOT: RECORD THE SALE ---
+                    # We record a 100 peso sale with 3 peso profit
+                    ref_id = database.record_sale(f"{network} Load", 100.00, 3.00)
+                    
                     st.balloons()
                     st.success(f"✅ LOAD SENT! Ref: {ref_id}")
-                    # NEXT STEP: We will save this sale to database.py here!
+                    st.toast("💰 Revenue Recorded in Admin Dashboard")
+                    
 
     elif selected == "✈️ Travel":
         st.subheader("✈️ Flight Booking (Amadeus GDS)")
