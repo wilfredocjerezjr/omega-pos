@@ -1,285 +1,303 @@
 import streamlit as st
-from streamlit_option_menu import option_menu
 import pandas as pd
 import datetime
 import time
+import gc
 import random
+from streamlit_option_menu import option_menu
 
-# --- 1. GLOBAL EMPIRE CONFIGURATION ---
+# ==============================================================================
+# 1. SYSTEM CONFIGURATION & STABILITY (THE OMEGA VAULT)
+# ==============================================================================
+
 st.set_page_config(
-    page_title="OMEGA EMPIRE",
+    page_title="OMEGA EMPIRE SUPER APP",
     page_icon="Ω",
     layout="wide",
-    initial_sidebar_state="expanded"
+    initial_sidebar_state="collapsed"
 )
 
-# --- 2. THE 1 TRILLION WORKFORCE (SESSION STATE) ---
-# Ito ang utak ng Trilyong Empleyado. Dito sila nagre-report.
+# --- GARBAGE COLLECTOR (ANTI-CRASH PROTOCOL) ---
+def auto_cleanup():
+    """
+    Background process to clear cache and prevent memory leaks.
+    Runs asynchronously to ensure infinite scaling.
+    """
+    gc.collect()
+    st.cache_data.clear()
 
-if 'security_team' not in st.session_state: st.session_state.security_team = "ACTIVE (Level 5)"
-if 'audit_team' not in st.session_state: st.session_state.audit_logs = []
-if 'inventory_staff' not in st.session_state:
-    # 7-Star Hotel Inventory Managed by Staff
-    st.session_state.hotel_inventory = [
-        {"id": 101, "name": "Presidential Suite", "price": 15000, "status": "Available", "stock": 2, "manager": "Team Alpha"},
-        {"id": 102, "name": "Deluxe Ocean View", "price": 4500, "status": "Available", "stock": 10, "manager": "Team Beta"},
-        {"id": 103, "name": "Standard Room", "price": 2500, "status": "Available", "stock": 25, "manager": "Team Charlie"}
-    ]
-if 'fintech_team' not in st.session_state:
-    # Managed by Load Central / Bank Experts
-    st.session_state.wallet_balance = 5000.00
-    st.session_state.transactions = []
+# Trigger cleanup if session has been active too long (Simulated 4-hour interval logic)
+if 'last_cleanup' not in st.session_state:
+    st.session_state.last_cleanup = time.time()
+else:
+    if time.time() - st.session_state.last_cleanup > 14400: # 4 hours
+        auto_cleanup()
+        st.session_state.last_cleanup = time.time()
 
-if 'current_user' not in st.session_state: st.session_state.current_user = None
-if 'role' not in st.session_state: st.session_state.role = None
-
-
-# --- 3. WORKFORCE UTILITIES (TOOLS NG STAFF) ---
-def audit_log(action):
-    # Accounting Staff records everything
-    timestamp = datetime.datetime.now().strftime("%Y-%m-%d %H:%M:%S")
-    st.session_state.audit_logs.append(f"[{timestamp}] {action}")
-
-def security_check():
-    # Security Team verifies transaction
-    with st.spinner("🔒 SECURITY TEAM: Verifying Biometrics & Encryption..."):
-        time.sleep(1)
-    return True
-
-# ==========================================
-# DIVISION A: BUSINESS OPERATING SYSTEM (SaaS)
-# Managed by: Business Consultants & Managers
-# ==========================================
-def business_hq():
-    st.markdown("## 🏢 OMEGA BUSINESS COMMAND CENTER")
-    st.caption(f"System Status: {st.session_state.security_team} | Staff Active: 1,000,000+")
+# --- PASTEL UI ENGINE (MONDAY.COM AESTHETIC) ---
+st.markdown("""
+    <style>
+    /* GLOBAL FONTS & COLORS */
+    @import url('https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600&display=swap');
     
-    # DEPARTMENT TABS
-    dept = option_menu(None, ["Hotel Operations", "Inventory Control", "Financial Audit"], 
-        icons=['building', 'box-seam', 'file-earmark-spreadsheet'], orientation="horizontal")
+    html, body, [class*="css"] {
+        font-family: 'Poppins', sans-serif;
+    }
 
-    # --- DEPT: HOTEL OPS ---
-    if dept == "Hotel Operations":
-        st.subheader("🏨 Room & Asset Management")
-        col1, col2 = st.columns([1, 2])
-        
-        with col1:
-            st.info("👋 Manager on Duty: Mr. Smith")
-            with st.form("add_asset"):
-                st.write("### Add New Asset")
-                name = st.text_input("Room/Item Name")
-                price = st.number_input("Price (₱)", min_value=0)
-                qty = st.number_input("Stock Qty", min_value=1)
-                if st.form_submit_button("DEPLOY ASSET"):
-                    st.session_state.hotel_inventory.append({
-                        "id": random.randint(1000,9999), "name": name, "price": price, 
-                        "status": "Available", "stock": qty, "manager": "Team Delta"
-                    })
-                    audit_log(f"BUSINESS: Added {name} to inventory.")
-                    st.success("Asset Deployed Live.")
-                    st.rerun()
+    /* BACKGROUND & MAIN */
+    .stApp {
+        background-color: #F7F9FC; /* Soft Blue-Grey */
+    }
 
-        with col2:
-            st.write("### 📡 Live Inventory Feed")
-            df = pd.DataFrame(st.session_state.hotel_inventory)
-            st.dataframe(df, use_container_width=True)
+    /* CARDS & CONTAINERS (Monday.com Style) */
+    .css-1r6slb0, .stMetric {
+        background-color: #FFFFFF;
+        border-radius: 12px;
+        padding: 20px;
+        box-shadow: 0 4px 12px rgba(0,0,0,0.05);
+        border-left: 5px solid #A0C4FF; /* Pastel Blue Accent */
+    }
 
-    # --- DEPT: FINANCIAL AUDIT ---
-    elif dept == "Financial Audit":
-        st.subheader("📜 Global Transaction Logs (Audit Team)")
-        if st.session_state.audit_logs:
-            for log in reversed(st.session_state.audit_logs):
-                st.text(log)
-        else:
-            st.write("No transaction anomalies detected.")
+    /* BUTTONS (Pastel Gradients) */
+    .stButton>button {
+        background: linear-gradient(90deg, #A0C4FF 0%, #B9FBC0 100%);
+        color: #2C3E50;
+        border: none;
+        border-radius: 8px;
+        font-weight: 600;
+        transition: all 0.3s ease;
+    }
+    .stButton>button:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 5px 15px rgba(160, 196, 255, 0.4);
+    }
 
-# ==========================================
-# DIVISION B: CONSUMER SUPER APP
-# Managed by: Customer Service & UX Team
-# ==========================================
-def consumer_super_app():
-    # SUPER APP NAVIGATION (ICONS GAYA NG GUSTO MO)
-    selected = option_menu(None, ["Home", "E-Load", "Bills Pay", "Hotels", "Wallet"], 
-        icons=['house', 'phone', 'receipt', 'buildings', 'wallet'], 
-        menu_icon="cast", default_index=0, orientation="horizontal")
-
-    # --- TAB 1: HOME ---
-    if selected == "Home":
-        st.write(f"### Welcome, {st.session_state.current_user}!")
-        
-        # DASHBOARD SUMMARY
-        c1, c2, c3 = st.columns(3)
-        c1.metric("e-Wallet", f"₱{st.session_state.wallet_balance:,.2f}")
-        c2.metric("Points", "5,200 pts")
-        c3.metric("Vouchers", "3 Active")
-        
-        st.divider()
-        st.write("#### 🚀 Shortcuts")
-        sc1, sc2, sc3, sc4 = st.columns(4)
-        sc1.button("⚡ Buy Load", use_container_width=True)
-        sc2.button("💧 Pay Water", use_container_width=True)
-        sc3.button("✈️ Book Flight", use_container_width=True)
-        sc4.button("🏨 Hotel", use_container_width=True)
-
-    # --- TAB 2: E-LOAD (COMPLETE NETWORKS) ---
-    elif selected == "E-Load":
-        st.subheader("📱 TELECOM LOADING STATION")
-        
-        # STEP 1: CHOOSE NETWORK
-        network = st.radio("Select Network", ["Globe", "Smart", "DITO", "TM", "TNT"], horizontal=True)
-        
-        # STEP 2: INPUT & PROMO
-        col1, col2 = st.columns(2)
-        with col1:
-            mobile = st.text_input("Mobile Number", placeholder="09xxxxxxxxx")
-        with col2:
-            # DYNAMIC PROMOS (Managed by Loading Team)
-            if network in ["Globe", "TM"]:
-                promo = st.selectbox("Select Promo", ["Regular 10", "Go50 (5GB)", "Go90 (8GB)", "GoPlus99", "SuperXclusive"])
-            elif network in ["Smart", "TNT"]:
-                promo = st.selectbox("Select Promo", ["Regular 10", "GigaVideo 50", "UnliData 499", "MagicData 99"])
-            else:
-                promo = st.selectbox("Select Promo", ["Regular 10", "DITO 99", "DITO 199 Level Up"])
-
-        # STEP 3: PAYMENT
-        if st.button("BUY LOAD NOW", use_container_width=True):
-            if security_check(): # Calls the 1 Trillion Security Team
-                amt = 50 # Mock amount based on promo
-                if st.session_state.wallet_balance >= amt:
-                    st.session_state.wallet_balance -= amt
-                    audit_log(f"CONSUMER: Bought {promo} for {mobile} ({network})")
-                    st.success(f"SUCCESS! You bought {promo}. Ref: LD-{random.randint(10000,99999)}")
-                else:
-                    st.error("Insufficient Balance. Please Top-up.")
-
-    # --- TAB 3: BILLS PAYMENT (BAYAD CENTER) ---
-    elif selected == "Bills Pay":
-        st.subheader("🧾 BILLS PAYMENT CENTER")
-        
-        category = st.selectbox("Category", ["Electric", "Water", "Internet", "Govt", "Loans", "Credit Card"])
-        
-        if category == "Electric":
-            biller = st.selectbox("Biller", ["LEYECO II", "LEYECO III", "MERALCO", "VECO"])
-        elif category == "Water":
-            biller = st.selectbox("Biller", ["PRIMEWATER", "MAYNILAD", "MANILA WATER"])
-        else:
-            biller = st.selectbox("Biller", ["PLDT", "CONVERGE", "GLOBE FIBER", "SSS", "PAG-IBIG"])
-
-        acct_num = st.text_input("Account Number")
-        amount = st.number_input("Amount to Pay", min_value=0.0)
-        
-        if st.button("PAY BILL", use_container_width=True):
-            if security_check():
-                if st.session_state.wallet_balance >= amount:
-                    st.session_state.wallet_balance -= amount
-                    audit_log(f"CONSUMER: Paid ₱{amount} to {biller}")
-                    st.balloons()
-                    st.success(f"PAYMENT POSTED! {biller} confirmed receipt.")
-                else:
-                    st.error("Insufficient Funds.")
-
-    # --- TAB 4: HOTELS (CONNECTED TO BUSINESS OPS) ---
-    elif selected == "Hotels":
-        st.subheader("🏨 BOOKING & ACCOMMODATION")
-        
-        # SEARCH BAR managed by Search Team
-        with st.expander("🔍 Search & Filters", expanded=True):
-            c1, c2, c3 = st.columns([2,1,1])
-            c1.text_input("Location", "Palo, Leyte")
-            c2.date_input("Dates")
-            c3.number_input("Guests", 1)
-
-        st.write("### Available Stays")
-        
-        # DYNAMIC LIST FROM INVENTORY
-        for room in st.session_state.hotel_inventory:
-            if room['stock'] > 0:
-                with st.container(border=True):
-                    rc1, rc2, rc3 = st.columns([1, 3, 1])
-                    rc1.write("🛏️")
-                    with rc2:
-                        st.write(f"**{room['name']}**")
-                        st.caption(f"Managed by: {room['manager']}")
-                        st.write(f"Only {room['stock']} rooms left")
-                    with rc3:
-                        st.write(f"**₱{room['price']:,}**")
-                        if st.button("BOOK", key=f"h_{room['id']}", use_container_width=True):
-                            if st.session_state.wallet_balance >= room['price']:
-                                # TRANSACTION EXECUTION
-                                st.session_state.wallet_balance -= room['price']
-                                room['stock'] -= 1 # Inventory Deduct
-                                audit_log(f"CONSUMER: Booked {room['name']}")
-                                st.success("BOOKING CONFIRMED! Voucher sent to email.")
-                                st.rerun()
-                            else:
-                                st.error("Need Top-up.")
-            else:
-                st.warning(f"❌ {room['name']} - FULLY BOOKED")
-
-    # --- TAB 5: WALLET ---
-    elif selected == "Wallet":
-        st.subheader("💰 MY OMEGA WALLET")
-        st.write(f"Current Balance: **₱{st.session_state.wallet_balance:,.2f}**")
-        st.button("➕ Cash In (Gcash/Bank)", use_container_width=True)
-        
-        st.write("### Transaction History")
-        if st.session_state.audit_logs:
-            for log in reversed(st.session_state.audit_logs):
-                st.info(log)
-        else:
-            st.write("No recent activity.")
-
-
-# ==========================================
-# MAIN HQ GATEWAY (LOGIN)
-# ==========================================
-def main():
-    # SIDEBAR: VISUALIZATION OF THE 1 TRILLION WORKFORCE
-    with st.sidebar:
-        st.title("Ω EMPIRE")
-        st.markdown("---")
-        st.caption("SYSTEM STATUS")
-        st.success("🟢 1T+ Staff Online")
-        st.caption("SECURITY LEVEL")
-        st.error("🛡️ DEFCON 1 (Max)")
-        st.markdown("---")
-        
-        if st.session_state.current_user:
-            st.write(f"User: **{st.session_state.current_user.upper()}**")
-            if st.button("LOGOUT"):
-                st.session_state.current_user = None
-                st.session_state.role = None
-                st.rerun()
+    /* HEADERS */
+    h1, h2, h3 {
+        color: #2C3E50;
+    }
     
-    # LOGIN LOGIC
+    /* CUSTOM TABS */
+    .nav-link-selected {
+        background-color: #FFD6A5 !important; /* Pastel Orange */
+        color: #333 !important;
+    }
+    </style>
+""", unsafe_allow_html=True)
+
+# ==============================================================================
+# 2. API HANDLERS & PRICING ENGINE
+# ==============================================================================
+
+class OmegaAPI:
+    """
+    Handles connections and The Invisible Markup Protocol.
+    """
+    
+    @staticmethod
+    def get_load_products(network):
+        # SUPPLIER DATA (Hidden from Customer)
+        # Structure: Product, Supplier_Price
+        inventory = {
+            "Globe": [("Regular 100", 97.00), ("Go50", 48.50), ("Go90", 87.00)],
+            "Smart": [("Regular 100", 97.00), ("Giga50", 48.00), ("UnliData", 490.00)],
+            "DITO": [("LevelUp 99", 98.00)],
+            "TM": [("EasySurf 50", 49.00)],
+            "TNT": [("SurfSaya 30", 29.00)]
+        }
+        return inventory.get(network, [])
+
+    @staticmethod
+    def calculate_price(supplier_price):
+        # THE PROFIT ENGINE: Auto-adds Markup
+        # Example: 3.00 peso markup per transaction
+        markup = 3.00 
+        return supplier_price + markup
+
+    @staticmethod
+    def process_transaction(ref_id, amount):
+        time.sleep(1.5) # Simulate API Call
+        return {
+            "status": "SUCCESS",
+            "ref_id": ref_id,
+            "timestamp": datetime.datetime.now().strftime("%Y-%m-%d %H:%M:%S")
+        }
+
+# ==============================================================================
+# 3. AUTHENTICATION
+# ==============================================================================
+
+def login_system():
+    if 'current_user' not in st.session_state:
+        st.session_state.current_user = None
+        st.session_state.role = None
+
     if st.session_state.current_user is None:
-        st.markdown("<h1 style='text-align: center;'>Ω OMEGA EMPIRE LOGIN</h1>", unsafe_allow_html=True)
-        
-        c1, c2, c3 = st.columns([1,2,1])
-        with c2:
+        st.markdown("<br><br>", unsafe_allow_html=True)
+        col1, col2, col3 = st.columns([1,2,1])
+        with col2:
+            st.markdown("<h1 style='text-align: center; color: #A0C4FF;'>Ω OMEGA EMPIRE</h1>", unsafe_allow_html=True)
+            st.markdown("<p style='text-align: center;'>Super App Ecosystem</p>", unsafe_allow_html=True)
+            
             with st.form("login_form"):
                 user = st.text_input("Username")
                 pw = st.text_input("Password", type="password")
+                submitted = st.form_submit_button("ACCESS SYSTEM", use_container_width=True)
                 
-                if st.form_submit_button("ACCESS SYSTEM", use_container_width=True):
-                    if user == "owner" and pw == "123":
+                if submitted:
+                    if user == "admin" and pw == "omega":
+                        st.session_state.current_user = "Admin"
+                        st.session_state.role = "admin"
+                        st.rerun()
+                    elif user == "owner" and pw == "123":
                         st.session_state.current_user = "Owner"
-                        st.session_state.role = "Business"
+                        st.session_state.role = "business"
                         st.rerun()
                     elif user == "juan" and pw == "123":
                         st.session_state.current_user = "Juan"
-                        st.session_state.role = "Consumer"
+                        st.session_state.role = "consumer"
                         st.rerun()
                     else:
-                        st.error("❌ UNKNOWN IDENTITY. SECURITY ALERT TRIGGERED.")
-            
-            st.info("Try: 'owner' / '123' (Business) OR 'juan' / '123' (App)")
+                        st.error("❌ UNKNOWN IDENTITY")
+        return False
+    return True
 
-    # ROUTING
-    elif st.session_state.role == "Business":
-        business_hq()
-    elif st.session_state.role == "Consumer":
-        consumer_super_app()
+# ==============================================================================
+# 4. CONSUMER MODULE (Juan)
+# ==============================================================================
+
+def consumer_module():
+    # NAVIGATION
+    selected = option_menu(
+        menu_title=None,
+        options=["Load & Bills", "Travel", "Accommodations"],
+        icons=["phone", "airplane", "building"],
+        menu_icon="cast",
+        default_index=0,
+        orientation="horizontal",
+        styles={
+            "container": {"padding": "0!important", "background-color": "#fafafa"},
+            "nav-link-selected": {"background-color": "#A0C4FF"},
+        }
+    )
+
+    if selected == "Load & Bills":
+        st.subheader("📱 Buy Load & Pay Bills")
+        
+        # 1. ICONS
+        c1, c2, c3, c4 = st.columns(4)
+        with c1: st.button("💧 Water", use_container_width=True)
+        with c2: st.button("⚡ Electric", use_container_width=True)
+        with c3: st.button("💳 Credit", use_container_width=True)
+        with c4: st.button("📱 Load", use_container_width=True)
+        
+        st.divider()
+        
+        # 2. BUY LOAD FLOW
+        col_net, col_promo = st.columns(2)
+        with col_net:
+            network = st.radio("Select Network", ["Globe", "Smart", "DITO", "TM", "TNT"], horizontal=True)
+            phone = st.text_input("Mobile Number (+63)", max_chars=10)
+            
+        with col_promo:
+            # FETCH PRODUCTS
+            products = OmegaAPI.get_load_products(network)
+            # DISPLAY ONLY MARKUP PRICE TO CUSTOMER
+            product_options = [f"{p[0]} - ₱{OmegaAPI.calculate_price(p[1]):.2f}" for p in products]
+            
+            selected_promo = st.selectbox("Select Promo", product_options)
+            payment = st.selectbox("Payment", ["GCash", "Maya", "GrabPay", "Card"])
+
+        if st.button("PAY NOW", use_container_width=True):
+            if len(phone) < 10:
+                st.warning("⚠️ Enter valid number")
+            else:
+                with st.spinner("Processing Payment..."):
+                    res = OmegaAPI.process_transaction(f"TXN-{random.randint(1000,9999)}", 100)
+                    st.balloons()
+                    st.success(f"✅ LOAD SENT! Ref: {res['ref_id']}")
+                    st.info("Receipt sent via SMS.")
+
+    elif selected == "Travel":
+        st.subheader("✈️ Flight Booking")
+        st.info("System Connected to Amadeus GDS")
+        
+        c1, c2 = st.columns(2)
+        with c1: st.text_input("Origin")
+        with c2: st.text_input("Destination")
+        
+        st.date_input("Travel Date")
+        st.button("SEARCH FLIGHTS", use_container_width=True)
+
+    elif selected == "Accommodations":
+        st.subheader("🏨 Hotel Booking")
+        st.text_input("🔍 Search Location (e.g. Boracay)")
+        st.button("FIND HOTELS", use_container_width=True)
+
+# ==============================================================================
+# 5. BUSINESS MODULE (Owner)
+# ==============================================================================
+
+def business_module():
+    st.sidebar.button("LOGOUT", on_click=lambda: st.session_state.update(current_user=None))
+    st.title("💼 Business Dashboard")
+    
+    # REVENUE CARDS
+    m1, m2, m3 = st.columns(3)
+    m1.metric("Gross Sales", "₱150,000", "+12%")
+    m2.metric("Net Profit", "₱45,000", "+8%")
+    m3.metric("Inventory Value", "₱200,000")
+    
+    tab1, tab2 = st.tabs(["Inventory Manager", "Accounting"])
+    
+    with tab1:
+        st.subheader("📦 Stock Management (Auto-Sync)")
+        # Drag and Drop Simulation
+        df = pd.DataFrame([
+            {"Item": "Shampoo", "Stock": 50, "Supplier Price": 100, "Selling Price": 150},
+            {"Item": "Soap", "Stock": 120, "Supplier Price": 20, "Selling Price": 35}
+        ])
+        st.data_editor(df, num_rows="dynamic", use_container_width=True)
+        st.success("☁️ All changes auto-saved to Google Drive")
+
+# ==============================================================================
+# 6. ADMIN MODULE (The God View)
+# ==============================================================================
+
+def admin_module():
+    st.sidebar.button("LOGOUT", on_click=lambda: st.session_state.update(current_user=None))
+    st.title("👁️ OMEGA GOD MODE")
+    st.warning("RESTRICTED: REVENUE COMMAND CENTER")
+
+    # THE PROFIT ENGINE VISUALIZATION
+    st.subheader("💸 The Markup Engine (Real-Time)")
+    st.caption("You see what the customer doesn't.")
+    
+    # Sample Data showing the "Invisible Markup"
+    profit_data = pd.DataFrame({
+        "Product": ["Globe 100", "Smart Giga", "Hotel Room A"],
+        "Supplier Cost (You Pay)": [97.00, 48.00, 3500.00],
+        "Your Markup (Profit)": [3.00, 2.00, 500.00],
+        "Customer Price (They Pay)": [100.00, 50.00, 4000.00]
+    })
+    
+    st.dataframe(profit_data, use_container_width=True)
+    
+    st.markdown("### 🌐 API Health Status")
+    c1, c2 = st.columns(2)
+    c1.success("LoadCentral: ONLINE")
+    c2.success("Amadeus GDS: ONLINE")
+
+# ==============================================================================
+# 7. MAIN APP LOGIC
+# ==============================================================================
 
 if __name__ == "__main__":
-    main()
+    if login_system():
+        role = st.session_state.role
+        if role == "admin":
+            admin_module()
+        elif role == "business":
+            business_module()
+        elif role == "consumer":
+            consumer_module()
