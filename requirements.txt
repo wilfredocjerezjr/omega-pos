@@ -1,5 +1,10 @@
 streamlit
 pandas
-xlsxwriter
-openpyxl
+plotly
+gspread
+oauth2client
+requests
 streamlit-option-menu
+psutil
+openpyxl
+xlsxwriter
