@@ -1,3 +1,5 @@
+import consumer_module as store  # We nickname it "store"
+
 import business_module as biz  # We give it the nickname "biz"
 
 import streamlit as st
@@ -171,72 +173,9 @@ def login_system():
 # ==============================================================================
 
 def consumer_module():
-    # NAVIGATION
-    selected = option_menu(
-        menu_title=None,
-        options=["Load & Bills", "Travel", "Accommodations"],
-        icons=["phone", "airplane", "building"],
-        menu_icon="cast",
-        default_index=0,
-        orientation="horizontal",
-        styles={
-            "container": {"padding": "0!important", "background-color": "#fafafa"},
-            "nav-link-selected": {"background-color": "#A0C4FF"},
-        }
-    )
-
-    if selected == "Load & Bills":
-        st.subheader("📱 Buy Load & Pay Bills")
-        
-        # 1. ICONS
-        c1, c2, c3, c4 = st.columns(4)
-        with c1: st.button("💧 Water", use_container_width=True)
-        with c2: st.button("⚡ Electric", use_container_width=True)
-        with c3: st.button("💳 Credit", use_container_width=True)
-        with c4: st.button("📱 Load", use_container_width=True)
-        
-        st.divider()
-        
-        # 2. BUY LOAD FLOW
-        col_net, col_promo = st.columns(2)
-        with col_net:
-            network = st.radio("Select Network", ["Globe", "Smart", "DITO", "TM", "TNT"], horizontal=True)
-            phone = st.text_input("Mobile Number (+63)", max_chars=10)
-            
-        with col_promo:
-            # FETCH PRODUCTS
-            products = OmegaAPI.get_load_products(network)
-            # DISPLAY ONLY MARKUP PRICE TO CUSTOMER
-            product_options = [f"{p[0]} - ₱{OmegaAPI.calculate_price(p[1]):.2f}" for p in products]
-            
-            selected_promo = st.selectbox("Select Promo", product_options)
-            payment = st.selectbox("Payment", ["GCash", "Maya", "GrabPay", "Card"])
-
-        if st.button("PAY NOW", use_container_width=True):
-            if len(phone) < 10:
-                st.warning("⚠️ Enter valid number")
-            else:
-                with st.spinner("Processing Payment..."):
-                    res = OmegaAPI.process_transaction(f"TXN-{random.randint(1000,9999)}", 100)
-                    st.balloons()
-                    st.success(f"✅ LOAD SENT! Ref: {res['ref_id']}")
-                    st.info("Receipt sent via SMS.")
-
-    elif selected == "Travel":
-        st.subheader("✈️ Flight Booking")
-        st.info("System Connected to Amadeus GDS")
-        
-        c1, c2 = st.columns(2)
-        with c1: st.text_input("Origin")
-        with c2: st.text_input("Destination")
-        
-        st.date_input("Travel Date")
-        st.button("SEARCH FLIGHTS", use_container_width=True)
-
-    elif selected == "Accommodations":
-        st.subheader("🏨 Hotel Booking")
-        st.text_input("🔍 Search Location (e.g. Boracay)")
-        st.button("FIND HOTELS", use_container_width=True)
+    # This just opens the door to the new consumer_module.py file
+    store.run()
+    
 
 # ==============================================================================
 # 5. BUSINESS MODULE (Owner)
