@@ -1,4 +1,5 @@
-import business_module
+import business_module as biz  # We give it the nickname "biz"
+
 import streamlit as st
 import pandas as pd
 import datetime
