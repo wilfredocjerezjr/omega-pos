@@ -1,3 +1,4 @@
+import business_module
 import streamlit as st
 import pandas as pd
 import datetime
@@ -241,26 +242,9 @@ def consumer_module():
 # ==============================================================================
 
 def business_module():
-    st.sidebar.button("LOGOUT", on_click=lambda: st.session_state.update(current_user=None))
-    st.title("💼 Business Dashboard")
+    # This connects to the new business_module.py file
+    business_module.run()
     
-    # REVENUE CARDS
-    m1, m2, m3 = st.columns(3)
-    m1.metric("Gross Sales", "₱150,000", "+12%")
-    m2.metric("Net Profit", "₱45,000", "+8%")
-    m3.metric("Inventory Value", "₱200,000")
-    
-    tab1, tab2 = st.tabs(["Inventory Manager", "Accounting"])
-    
-    with tab1:
-        st.subheader("📦 Stock Management (Auto-Sync)")
-        # Drag and Drop Simulation
-        df = pd.DataFrame([
-            {"Item": "Shampoo", "Stock": 50, "Supplier Price": 100, "Selling Price": 150},
-            {"Item": "Soap", "Stock": 120, "Supplier Price": 20, "Selling Price": 35}
-        ])
-        st.data_editor(df, num_rows="dynamic", use_container_width=True)
-        st.success("☁️ All changes auto-saved to Google Drive")
 
 # ==============================================================================
 # 6. ADMIN MODULE (The God View)
