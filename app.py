@@ -269,26 +269,44 @@ def business_module():
 def admin_module():
     st.sidebar.button("LOGOUT", on_click=lambda: st.session_state.update(current_user=None))
     st.title("👁️ OMEGA GOD MODE")
-    st.warning("RESTRICTED: REVENUE COMMAND CENTER")
+    st.warning("⚠️ REVENUE COMMAND CENTER: DATABASE CONNECTED")
 
-    # THE PROFIT ENGINE VISUALIZATION
-    st.subheader("💸 The Markup Engine (Real-Time)")
-    st.caption("You see what the customer doesn't.")
+    # --- CONNECT TO MEMORY CHIP ---
+    if 'profit_config' not in st.session_state:
+        st.session_state.profit_config = database.init_connection()
+
+    # --- THE INTERACTIVE PROFIT ENGINE ---
+    st.subheader("💸 Profit Margin Controller")
+    st.info("💡 Changes made here are now saved to the Session Database.")
     
-    # Sample Data showing the "Invisible Markup"
-    profit_data = pd.DataFrame({
-        "Product": ["Globe 100", "Smart Giga", "Hotel Room A"],
-        "Supplier Cost (You Pay)": [97.00, 48.00, 3500.00],
-        "Your Markup (Profit)": [3.00, 2.00, 500.00],
-        "Customer Price (They Pay)": [100.00, 50.00, 4000.00]
-    })
+    # EDITABLE GRID
+    edited_df = st.data_editor(
+        st.session_state.profit_config,
+        num_rows="dynamic",
+        use_container_width=True,
+        column_config={
+            "Your Markup (Profit)": st.column_config.NumberColumn(
+                "Your Profit (₱)",
+                format="₱%.2f"
+            )
+        }
+    )
     
-    st.dataframe(profit_data, use_container_width=True)
+    # THE SAVE BUTTON
+    if st.button("💾 SAVE TO DATABASE", type="primary", use_container_width=True):
+        database.save_profit_config(edited_df)
+        st.session_state.profit_config = edited_df
+        st.toast("✅ DATABASE UPDATED! Margins secured.")
+        st.balloons()
     
-    st.markdown("### 🌐 API Health Status")
+    st.divider()
+    
+    # --- API CONTROLS ---
+    st.subheader("🌐 Global Connection Status")
     c1, c2 = st.columns(2)
-    c1.success("LoadCentral: ONLINE")
-    c2.success("Amadeus GDS: ONLINE")
+    c1.success("✅ LoadCentral: CONNECTED")
+    c2.success("✅ Amadeus GDS: SECURE")
+    
 
 # ==============================================================================
 # 7. MAIN APP LOGIC
