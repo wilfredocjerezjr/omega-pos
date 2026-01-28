@@ -240,11 +240,10 @@ def consumer_module():
 
 # ==============================================================================
 # 5. BUSINESS MODULE (Owner)
-# ==============================================================================
-
+# ============================================================================== 
 def business_module():
-    # This connects to the new business_module.py file
-    business_module.run()
+    # We use the nickname "biz" here so Python doesn't get confused
+    biz.run()
     
 
 # ==============================================================================
