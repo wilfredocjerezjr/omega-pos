@@ -5,6 +5,8 @@ import time
 import gc
 import random
 from streamlit_option_menu import option_menu
+import database
+
 
 # ==============================================================================
 # 1. SYSTEM CONFIGURATION & STABILITY (THE OMEGA VAULT)
